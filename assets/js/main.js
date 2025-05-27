@@ -1,13 +1,128 @@
-/**
-* Template Name: iPortfolio
-* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-* Updated: Mar 17 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
-(function() {
+(function () {
   "use strict";
+
+  // Function to calculate age
+  function calculateAge(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
+  // Update age in UI
+  function updateAgeDisplay() {
+    const birthDate = '2003-05-23';
+    const age = calculateAge(birthDate);
+
+    // Update age span
+    const ageSpan = select('[data-age-display]');
+    if (ageSpan) {
+      ageSpan.textContent = age;
+    }
+
+    // Update about description with current age
+    const aboutDesc = select('[data-lang-key="aboutDescription"]');
+    if (aboutDesc) {
+      translations.en.aboutDescription = `My name is Tomás Vicente, I am ${age} years old and I am a student in Game Developement. Every day, I am one step closer to realizing my dream of becoming a "game developer". Currently pursuing a Bachelor's Degree in Game Development at IADE - Creative University, my passion for this field originated from my childhood spent immersed in games. The captivating stories and characters inspired me to create experiences that not only bring joy but also offer opportunities for learning and growth. I am driven by the belief that games can be a powerful medium for exploration and expression.`;
+      translations.pt.aboutDescription = `O meu nome é Tomás Vicente, tenho ${age} anos e sou estudante de Desenvolvimento de Jogos. A cada dia, estou mais perto de realizar o meu sonho de me tornar um "desenvolvedor de jogos". Atualmente a tirar a Licenciatura em Desenvolvimento de Jogos no IADE - Universidade Criativa, a minha paixão por esta área teve origem na minha infância passada imersa em jogos. As histórias e personagens cativantes inspiraram-me a criar experiências que não só trazem alegria, mas também oferecem oportunidades de aprendizagem e crescimento. Sou motivado pela convicção de que os jogos podem ser um meio poderoso para exploração e expressão.`;
+
+      // Update the text content based on current language
+      aboutDesc.textContent = translations[currentLang].aboutDescription;
+    }
+  }
+
+  // Translations object
+  const translations = {
+    en: {
+      home: "Home",
+      about: "About",
+      portfolio: "Portfolio",
+      skills: "Skills",
+      aboutTitle: "About",
+      aboutDescription: "My name is Tomás Vicente, I am ${age} years old and I am a student in Game Developement. Every day, I am one step closer to realizing my dream of becoming a \"game developer\". Currently pursuing a Bachelor's Degree in Game Development at IADE - Creative University, my passion for this field originated from my childhood spent immersed in games. The captivating stories and characters inspired me to create experiences that not only bring joy but also offer opportunities for learning and growth. I am driven by the belief that games can be a powerful medium for exploration and expression.",
+      gameplayProgrammer: "Gameplay Programmer",
+      gameplayDescription: "Responsible to create general mechanics, related to the main character, enemies, the level enviroment and rules, so the game flows the right way.",
+      birthday: "Birthday:",
+      age: "Age:",
+      city: "City:",
+      city_Text: "Lisbon, Portugal",
+      degree: "Degree:",
+      email: "Email:",
+      cv: "CV:",
+      download: "Download",
+      here: "here",
+      skillsTitle: "Skills",
+      skillsDescription: "Learning is hard, but it's so fun when we get the hang of it.",
+      otherSkills: "Other Relevant Skills",
+      oS_ImageEditing: "Image Editing (Photoshop)",
+      oS_VideoEditing: "Video Editing (Premiere)",
+    },
+    pt: {
+      home: "Página Inicial",
+      about: "Sobre",
+      portfolio: "Portfólio",
+      skills: "Competências",
+      aboutTitle: "Sobre",
+      aboutDescription: "O meu nome é Tomás Vicente, tenho ${age} anos e sou estudante de Desenvolvimento de Jogos. A cada dia, estou mais perto de realizar o meu sonho de me tornar um \"desenvolvedor de jogos\". Atualmente a tirar a Licenciatura em Desenvolvimento de Jogos no IADE - Universidade Criativa, a minha paixão por esta área teve origem na minha infância passada imersa em jogos. As histórias e personagens cativantes inspiraram-me a criar experiências que não só trazem alegria, mas também oferecem oportunidades de aprendizagem e crescimento. Sou motivado pela convicção de que os jogos podem ser um meio poderoso para exploração e expressão.",
+      gameplayProgrammer: "Programador de Jogabilidade",
+      gameplayDescription: "Responsável por criar mecânicas gerais, relacionadas com a personagem principal, inimigos, o ambiente do nível e regras, para que o jogo flua da forma adequada.",
+      birthday: "Data de Nascimento:",
+      age: "Idade:",
+      city: "Cidade:",
+      city_Text: "Lisboa, Portugal",
+      degree: "Grau Académico:",
+      email: "Email:",
+      cv: "CV:",
+      download: "Transferir",
+      here: "aqui",
+      skillsTitle: "Competências",
+      skillsDescription: "Aprender é difícil, mas é tão divertido quando apanhamos o jeito.",
+      otherSkills: "Outras Competências Relevantes",
+      oS_ImageEditing: "Edição de Imagem (Photoshop)",
+      oS_VideoEditing: "Edição de Vídeo (Premiere)",
+    }
+  };
+
+  let currentLang = 'en';
+
+  // Function to update page content based on selected language
+  function updateLanguage(lang) {
+    currentLang = lang;
+    const t = translations[lang];
+
+    // Update navigation
+    select('#navbar .nav-link span', true).forEach(el => {
+      const key = el.parentElement.getAttribute('data-lang-key');
+      if (key && t[key]) el.textContent = t[key];
+    });
+
+    // Update sections with data-lang-key
+    select('[data-lang-key]', true).forEach(el => {
+      const key = el.getAttribute('data-lang-key');
+      if (!key || !t[key]) return;
+
+      // Special handling for elements that should preserve their HTML
+      if (el.classList.contains('nav-link')) {
+        const icon = el.querySelector('i').outerHTML;
+        const text = t[key];
+        el.innerHTML = `${icon}<span>${text}</span>`;
+      } else {
+        el.textContent = t[key];
+      }
+    });
+
+    // Update button text
+    const langBtn = select('#langToggle');
+    if (langBtn) {
+      langBtn.innerHTML = `<i class="bi bi-translate"></i> ${lang.toUpperCase()}`;
+    }
+  }
+
 
   /**
    * Easy selector helper function
@@ -92,7 +207,7 @@
   /**
    * Mobile nav toggle
    */
-  on('click', '.mobile-nav-toggle', function(e) {
+  on('click', '.mobile-nav-toggle', function (e) {
     select('body').classList.toggle('mobile-nav-active')
     this.classList.toggle('bi-list')
     this.classList.toggle('bi-x')
@@ -101,7 +216,7 @@
   /**
    * Scrool with ofset on links with a class name .scrollto
    */
-  on('click', '.scrollto', function(e) {
+  on('click', '.scrollto', function (e) {
     if (select(this.hash)) {
       e.preventDefault()
 
@@ -151,7 +266,7 @@
     new Waypoint({
       element: skilsContent,
       offset: '80%',
-      handler: function(direction) {
+      handler: function (direction) {
         let progress = select('.progress .progress-bar', true);
         progress.forEach((el) => {
           el.style.width = el.getAttribute('aria-valuenow') + '%'
@@ -172,9 +287,9 @@
 
       let portfolioFilters = select('#portfolio-flters li', true);
 
-      on('click', '#portfolio-flters li', function(e) {
+      on('click', '#portfolio-flters li', function (e) {
         e.preventDefault();
-        portfolioFilters.forEach(function(el) {
+        portfolioFilters.forEach(function (el) {
           el.classList.remove('filter-active');
         });
         this.classList.add('filter-active');
@@ -182,7 +297,7 @@
         portfolioIsotope.arrange({
           filter: this.getAttribute('data-filter')
         });
-        portfolioIsotope.on('arrangeComplete', function() {
+        portfolioIsotope.on('arrangeComplete', function () {
           AOS.refresh()
         });
       }, true);
@@ -260,4 +375,36 @@
    */
   new PureCounter();
 
-})()
+  // Initialize language system and age calculation
+  window.addEventListener('load', () => {
+    // Calculate and display age
+    updateAgeDisplay();
+    // Initialize with English
+    updateLanguage('en');
+    // Add data-lang-key attributes to elements
+    const navLinks = {
+      '#hero': 'home',
+      '#about': 'about',
+      '#portfolio': 'portfolio'
+    };
+
+    // Set up navigation links
+    Object.entries(navLinks).forEach(([href, key]) => {
+      const link = select(`#navbar a[href="${href}"]`);
+      if (link) link.setAttribute('data-lang-key', key);
+    });
+    select('.section-title h2').setAttribute('data-lang-key', 'aboutTitle');
+    select('.section-title p').setAttribute('data-lang-key', 'aboutDescription');
+    select('.content h3').setAttribute('data-lang-key', 'gameplayProgrammer');
+    select('.content .fst-italic').setAttribute('data-lang-key', 'gameplayDescription');
+    select('#skills .section-title h2').setAttribute('data-lang-key', 'skillsTitle');
+    select('#skills .section-title p').setAttribute('data-lang-key', 'skillsDescription');
+    select('.col-lg-3 h5').setAttribute('data-lang-key', 'otherSkills');
+
+    // Add click event listener to language toggle button
+    on('click', '#langToggle', function () {
+      const newLang = currentLang === 'en' ? 'pt' : 'en';
+      updateLanguage(newLang);
+    });
+  });
+})();
