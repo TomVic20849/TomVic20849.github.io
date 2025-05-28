@@ -95,6 +95,15 @@
     currentLang = lang;
     const t = translations[lang];
 
+    // Update CV download link based on language
+    const cvLink = select('#cv-download-link');
+    if (cvLink) {
+      const cvPath = lang === 'en' ?
+        './assets/cv/Tomás Vicente - CV[En].pdf' :
+        './assets/cv/Tomás Vicente - CV[Pt].pdf';
+      cvLink.setAttribute('href', cvPath);
+    }
+
     // Update navigation
     select('#navbar .nav-link span', true).forEach(el => {
       const key = el.parentElement.getAttribute('data-lang-key');
